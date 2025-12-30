@@ -1,0 +1,21 @@
+# Godot 4+ specific ignores
+.godot/
+.idea/
+/android/
+addons/*/.import
+addons/*/.godot
+addons/*/builds/
+
+# Godot auto-generated import files
+*.import
+# Build artifacts
+builds/
+*.tmp
+# User-specific settings
+.vscode/
+*.swp
+*.swo
+*~
+# OS specific
+.DS_Store
+Thumbs.db

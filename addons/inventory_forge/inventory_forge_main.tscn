@@ -1,0 +1,742 @@
+[gd_scene load_steps=2 format=3 uid="uid://cwbsm8ma4bh48"]
+
+[ext_resource type="Script" path="res://addons/inventory_forge/inventory_forge_main.gd" id="1_main"]
+
+[node name="InventoryForgeMain" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_main")
+
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 300
+
+[node name="LeftPanel" type="VBoxContainer" parent="HSplitContainer"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Toolbar" type="HBoxContainer" parent="HSplitContainer/LeftPanel"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 4
+
+[node name="AddButton" type="Button" parent="HSplitContainer/LeftPanel/Toolbar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "New Item"
+text = "+ New"
+
+[node name="DuplicateButton" type="Button" parent="HSplitContainer/LeftPanel/Toolbar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Duplicate Item"
+disabled = true
+text = "Copy"
+
+[node name="DeleteButton" type="Button" parent="HSplitContainer/LeftPanel/Toolbar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Delete Item"
+disabled = true
+text = "Delete"
+
+[node name="Spacer" type="Control" parent="HSplitContainer/LeftPanel/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemCountLabel" type="Label" parent="HSplitContainer/LeftPanel/Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "4 items"
+
+[node name="SearchEdit" type="LineEdit" parent="HSplitContainer/LeftPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Search..."
+clear_button_enabled = true
+
+[node name="CategoryFilter" type="OptionButton" parent="HSplitContainer/LeftPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 8
+popup/item_0/text = "All Categories"
+popup/item_0/id = 0
+popup/item_1/text = "Consumable"
+popup/item_1/id = 0
+popup/item_2/text = "Weapon"
+popup/item_2/id = 1
+popup/item_3/text = "Armor"
+popup/item_3/id = 2
+popup/item_4/text = "Accessory"
+popup/item_4/id = 3
+popup/item_5/text = "Material"
+popup/item_5/id = 4
+popup/item_6/text = "Key Item"
+popup/item_6/id = 5
+popup/item_7/text = "Misc"
+popup/item_7/id = 6
+
+[node name="ItemList" type="ItemList" parent="HSplitContainer/LeftPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+allow_reselect = true
+item_count = 4
+item_0/text = "[1] ITEM_POTION_NAME"
+item_1/text = "[2] ITEM_SWORD_NAME"
+item_2/text = "[3] ITEM_MEGA_POTION_NAME"
+item_3/text = "[4] ITEM_PALLA_DI_FUOCO_NAME"
+
+[node name="RightPanel" type="PanelContainer" parent="HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="HSplitContainer/RightPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="NoSelectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Select an item from the list
+or click + to create a new one"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainVSplit" type="VSplitContainer" parent="HSplitContainer/RightPanel/MarginContainer"]
+layout_mode = 2
+split_offset = 400
+
+[node name="DetailsContainer" type="ScrollContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="DetailsVBox" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="HeaderSection" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox"]
+layout_mode = 2
+
+[node name="IconPreview" type="TextureRect" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/HeaderSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeaderInfo" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/HeaderSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemNameLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/HeaderSection/HeaderInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Item Name"
+
+[node name="ItemIdLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/HeaderSection/HeaderInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+text = "ID: 0"
+
+[node name="HSeparator" type="HSeparator" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox"]
+layout_mode = 2
+
+[node name="TwoColumnsContainer" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="LeftColumn" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BaseSection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn"]
+layout_mode = 2
+
+[node name="BaseSectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "BASE"
+
+[node name="IdRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection"]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/IdRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "ID"
+
+[node name="IdSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/IdRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -1.0
+max_value = 99999.0
+
+[node name="NameKeyRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection"]
+layout_mode = 2
+
+[node name="NameKeyLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/NameKeyRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Name Key"
+
+[node name="NameKeyEdit" type="LineEdit" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/NameKeyRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "ITEM_NAME"
+
+[node name="GenerateNameKeyButton" type="Button" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/NameKeyRow"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Generate key automatically"
+text = "Gen"
+
+[node name="DescKeyRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection"]
+layout_mode = 2
+
+[node name="DescKeyLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/DescKeyRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Desc Key"
+
+[node name="DescKeyEdit" type="LineEdit" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/DescKeyRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "ITEM_DESC"
+
+[node name="GenerateDescKeyButton" type="Button" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/DescKeyRow"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Generate key automatically"
+text = "Gen"
+
+[node name="IconRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection"]
+layout_mode = 2
+
+[node name="IconLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/IconRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Icon"
+
+[node name="IconPicker" type="Button" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/IconRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Select icon..."
+
+[node name="ClearIconButton" type="Button" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/IconRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+tooltip_text = "Remove icon"
+text = "X"
+
+[node name="CategoryRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection"]
+layout_mode = 2
+
+[node name="CategoryLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/CategoryRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Category"
+
+[node name="CategoryOption" type="OptionButton" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/BaseSection/CategoryRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 7
+popup/item_0/text = "Consumable"
+popup/item_0/id = 0
+popup/item_1/text = "Weapon"
+popup/item_1/id = 1
+popup/item_2/text = "Armor"
+popup/item_2/id = 2
+popup/item_3/text = "Accessory"
+popup/item_3/id = 3
+popup/item_4/text = "Material"
+popup/item_4/id = 4
+popup/item_5/text = "Key Item"
+popup/item_5/id = 5
+popup/item_6/text = "Misc"
+popup/item_6/id = 6
+
+[node name="StackSection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn"]
+layout_mode = 2
+
+[node name="StackSectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/StackSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "STACK"
+
+[node name="StackCapacityRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/StackSection"]
+layout_mode = 2
+
+[node name="StackCapacityLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/StackSection/StackCapacityRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Stack Capacity"
+
+[node name="StackCapacitySpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/StackSection/StackCapacityRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 999.0
+value = 99.0
+
+[node name="StackLimitRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/StackSection"]
+layout_mode = 2
+
+[node name="StackLimitLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/StackSection/StackLimitRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Stack Limit"
+
+[node name="StackLimitSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/StackSection/StackLimitRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 999.0
+suffix = "(0 = inf)"
+
+[node name="EconomySection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn"]
+layout_mode = 2
+
+[node name="EconomySectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "ECONOMY"
+
+[node name="BuyPriceRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection"]
+layout_mode = 2
+
+[node name="BuyPriceLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection/BuyPriceRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Buy Price"
+
+[node name="BuyPriceSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection/BuyPriceRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 999999.0
+
+[node name="SellPriceRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection"]
+layout_mode = 2
+
+[node name="SellPriceLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection/SellPriceRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Sell Price"
+
+[node name="SellPriceSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection/SellPriceRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 999999.0
+
+[node name="TradeableRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection"]
+layout_mode = 2
+
+[node name="TradeableLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection/TradeableRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Tradeable"
+
+[node name="TradeableCheck" type="CheckBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/LeftColumn/EconomySection/TradeableRow"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="VSeparator" type="VSeparator" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer"]
+layout_mode = 2
+size_flags_stretch_ratio = 0.1
+
+[node name="RightColumn" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RaritySection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn"]
+layout_mode = 2
+
+[node name="RaritySectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/RaritySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "RARITY"
+
+[node name="RarityRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/RaritySection"]
+layout_mode = 2
+
+[node name="RarityLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/RaritySection/RarityRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Rarity"
+
+[node name="RarityOption" type="OptionButton" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/RaritySection/RarityRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 5
+popup/item_0/text = "Common"
+popup/item_0/id = 0
+popup/item_1/text = "Uncommon"
+popup/item_1/id = 1
+popup/item_2/text = "Rare"
+popup/item_2/id = 2
+popup/item_3/text = "Epic"
+popup/item_3/id = 3
+popup/item_4/text = "Legendary"
+popup/item_4/id = 4
+
+[node name="RequiredLevelRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/RaritySection"]
+layout_mode = 2
+
+[node name="RequiredLevelLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/RaritySection/RequiredLevelRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Required Level"
+
+[node name="RequiredLevelSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/RaritySection/RequiredLevelRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EquipmentSection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn"]
+layout_mode = 2
+
+[node name="EquipmentSectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "EQUIPMENT"
+
+[node name="EquippableRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection"]
+layout_mode = 2
+
+[node name="EquippableLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/EquippableRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Equippable"
+
+[node name="EquippableCheck" type="CheckBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/EquippableRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="EquipSlotRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection"]
+layout_mode = 2
+
+[node name="EquipSlotLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/EquipSlotRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Equip Slot"
+
+[node name="EquipSlotOption" type="OptionButton" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/EquipSlotRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 9
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "Head"
+popup/item_1/id = 1
+popup/item_2/text = "Body"
+popup/item_2/id = 2
+popup/item_3/text = "Hands"
+popup/item_3/id = 3
+popup/item_4/text = "Feet"
+popup/item_4/id = 4
+popup/item_5/text = "Weapon"
+popup/item_5/id = 5
+popup/item_6/text = "Shield"
+popup/item_6/id = 6
+popup/item_7/text = "Accessory 1"
+popup/item_7/id = 7
+popup/item_8/text = "Accessory 2"
+popup/item_8/id = 8
+
+[node name="StatsContainer" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="StatsLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+text = "Stats:"
+
+[node name="StatsGrid" type="GridContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer"]
+layout_mode = 2
+columns = 4
+
+[node name="AtkLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "ATK"
+
+[node name="StatAtkSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -999.0
+max_value = 999.0
+
+[node name="DefLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "DEF"
+
+[node name="StatDefSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -999.0
+max_value = 999.0
+
+[node name="HpLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "HP"
+
+[node name="StatHpSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -9999.0
+max_value = 9999.0
+
+[node name="MpLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "MP"
+
+[node name="StatMpSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -9999.0
+max_value = 9999.0
+
+[node name="SpdLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "SPD"
+
+[node name="StatSpdSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/EquipmentSection/StatsContainer/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -999.0
+max_value = 999.0
+
+[node name="ConsumableSection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn"]
+layout_mode = 2
+
+[node name="ConsumableSectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "CONSUMABLE"
+
+[node name="ConsumableRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection"]
+layout_mode = 2
+
+[node name="ConsumableLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Consumable"
+
+[node name="ConsumableCheck" type="CheckBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ConsumableContainer" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="EffectTypeRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer"]
+layout_mode = 2
+
+[node name="EffectTypeLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer/EffectTypeRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Effect Type"
+
+[node name="EffectTypeOption" type="OptionButton" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer/EffectTypeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 12
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "Heal Hp"
+popup/item_1/id = 1
+popup/item_2/text = "Heal Mp"
+popup/item_2/id = 2
+popup/item_3/text = "Heal Both"
+popup/item_3/id = 3
+popup/item_4/text = "Buff Atk"
+popup/item_4/id = 4
+popup/item_5/text = "Buff Def"
+popup/item_5/id = 5
+popup/item_6/text = "Buff Spd"
+popup/item_6/id = 6
+popup/item_7/text = "Cure Poison"
+popup/item_7/id = 7
+popup/item_8/text = "Cure All"
+popup/item_8/id = 8
+popup/item_9/text = "Damage"
+popup/item_9/id = 9
+popup/item_10/text = "Teleport"
+popup/item_10/id = 10
+popup/item_11/text = "Revive"
+popup/item_11/id = 11
+
+[node name="EffectValueRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer"]
+layout_mode = 2
+
+[node name="EffectValueLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer/EffectValueRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Effect Value"
+
+[node name="EffectValueSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer/EffectValueRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 9999.0
+
+[node name="EffectDurationRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer"]
+layout_mode = 2
+
+[node name="EffectDurationLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer/EffectDurationRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Duration (sec)"
+
+[node name="EffectDurationSpinBox" type="SpinBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/TwoColumnsContainer/RightColumn/ConsumableSection/ConsumableContainer/EffectDurationRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 600.0
+step = 0.1
+suffix = "s"
+
+[node name="HSeparator2" type="HSeparator" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox"]
+layout_mode = 2
+
+[node name="QuestSection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox"]
+layout_mode = 2
+
+[node name="QuestSectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/QuestSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "QUEST"
+
+[node name="QuestItemRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/QuestSection"]
+layout_mode = 2
+
+[node name="QuestItemLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/QuestSection/QuestItemRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Quest Item"
+
+[node name="QuestItemCheck" type="CheckBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/QuestSection/QuestItemRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="QuestIdEdit" type="LineEdit" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/QuestSection"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+placeholder_text = "Quest ID (opzionale)"
+
+[node name="CraftingSection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox"]
+layout_mode = 2
+
+[node name="CraftingSectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "CRAFTING"
+
+[node name="CraftableRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection"]
+layout_mode = 2
+
+[node name="CraftableLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/CraftableRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Craftable"
+
+[node name="CraftableCheck" type="CheckBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/CraftableRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IngredientsContainer" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="IngredientsLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IngredientsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+text = "Ingredienti: (da implementare)"
+
+[node name="WarningsPanel" type="PanelContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="WarningsSection" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/WarningsPanel"]
+layout_mode = 2
+
+[node name="WarningsSectionLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/WarningsPanel/WarningsSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+text = "WARNINGS"
+
+[node name="WarningsContainer" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/WarningsPanel/WarningsSection"]
+unique_name_in_owner = true
+layout_mode = 2
