@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="Inventory Forge Logo" width="600">
+</p>
+
 # Inventory Forge - Item Database Editor for Godot 4.x
 
 **Visual item database editor with multilingual support for RPG and adventure games**
