@@ -112,13 +112,39 @@ func _save_database() -> void:
 		return
 	
 	var db_path := _get_database_path()
+	
+	# Ensure directory exists
+	var dir_path := db_path.get_base_dir()
+	if not DirAccess.dir_exists_absolute(dir_path):
+		var err := DirAccess.make_dir_recursive_absolute(dir_path)
+		if err != OK:
+			push_error("[InventoryForge] Cannot create directory: %s (error: %s)" % [dir_path, err])
+			return
+	
+	# Check if path is writable
+	if db_path.begins_with("res://addons/inventory_forge/demo/"):
+		push_warning("[InventoryForge] Saving to demo database. Consider using a custom path in Project Settings.")
+	
 	var error := ResourceSaver.save(database, db_path)
 	if error != OK:
-		push_error("[InventoryForge] Error saving database: %s" % error)
+		var error_msg := ""
+		match error:
+			ERR_CANT_OPEN:
+				error_msg = "Cannot open file for writing. File may be read-only or locked."
+			ERR_CANT_CREATE:
+				error_msg = "Cannot create file. Check directory permissions."
+			ERR_FILE_CANT_WRITE:
+				error_msg = "Cannot write to file. File may be in use."
+			_:
+				error_msg = "Unknown error code: %s" % error
+		
+		push_error("[InventoryForge] Error saving database to '%s': %s" % [db_path, error_msg])
+		push_error("[InventoryForge] Try changing the database path in Project Settings → Inventory Forge → Database → Path")
 	else:
 		# Notify editor that resource has changed
 		if Engine.is_editor_hint():
 			database.emit_changed()
+		print("[InventoryForge] Database saved successfully to: %s" % db_path)
 
 
 func _setup_ui() -> void:

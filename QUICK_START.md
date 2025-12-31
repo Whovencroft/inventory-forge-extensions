@@ -11,8 +11,12 @@
 ### First Steps
 1. Click **"Inventory Forge"** tab (top bar, next to 2D/3D/Script)
 2. You'll see 6 demo items pre-loaded
-3. Click **"+ Nuovo"** to create your first item
-4. Fill in details and save (auto-saves!)
+3. **⚠️ IMPORTANT:** Before editing, change database path to your project folder:
+   - **Project → Project Settings → Inventory Forge → Database → Path**
+   - Example: `res://data/items/my_database.tres`
+   - (Demo database in `addons/` folder may be read-only)
+4. Click **"+ Nuovo"** to create your first item
+5. Fill in details and save (auto-saves!)
 
 ---
 
@@ -106,6 +110,14 @@ print(item.get_translated_name())  # "Pozione Vita"
 ---
 
 ## ❓ Common Issues
+
+### "Cannot save database" or "Error 15"
+- **Cause:** Demo database in `addons/` folder is read-only
+- **Solution:** Change database path to your project folder:
+  1. **Project → Project Settings → Inventory Forge → Database → Path**
+  2. Set to `res://data/items/my_database.tres` (or any path outside `addons/`)
+  3. Create the folder if needed
+  4. Restart the editor or reload the Inventory Forge tab
 
 ### "Plugin doesn't appear in Plugins list"
 - Make sure folder is `addons/inventory_forge/` (not `addons/addons/inventory_forge/`)
