@@ -22,6 +22,9 @@ signal database_changed()
 		emit_changed()
 		database_changed.emit()
 
+## Migration flag - do not modify manually
+@export var _migration_v2_materials_done: bool = false
+
 
 # === Search Methods ===
 
@@ -118,6 +121,15 @@ func filter_items(category_filter: int = -1, search_query: String = "") -> Array
 		
 		result.append(item)
 	
+	return result
+
+
+## Gets all items marked as ingredients
+func get_ingredients() -> Array[ItemDefinition]:
+	var result: Array[ItemDefinition] = []
+	for item in items:
+		if item and item.is_ingredient:
+			result.append(item)
 	return result
 
 
@@ -314,3 +326,36 @@ func get_stats() -> Dictionary:
 		"duplicate_ids": get_duplicate_ids().size(),
 		"category_counts": get_category_counts(),
 	}
+
+
+# === Migration ===
+
+## Migrates old MATERIAL category (index 4) to new is_ingredient system
+func migrate_materials_to_ingredients() -> void:
+	var migrated_count := 0
+	
+	for item in items:
+		if item == null:
+			continue
+		
+		# Se category == 4 (vecchio MATERIAL), converti
+		if item.category == 4:
+			item.is_ingredient = true
+			item.material_type = ItemEnums.MaterialType.MISC  # Default conservativo
+			item.category = ItemEnums.Category.MISC  # Nuova categoria MISC (indice 5)
+			migrated_count += 1
+			print("[InventoryForge Migration] Item ID %d '%s' migrated: MATERIAL → MISC + is_ingredient" % [item.id, item.name_key])
+	
+	if migrated_count > 0:
+		print("[InventoryForge Migration] Successfully migrated %d items from MATERIAL to ingredient system" % migrated_count)
+		emit_changed()
+		database_changed.emit()
+
+
+## Validates and runs migrations if needed
+func validate_and_migrate() -> void:
+	if not _migration_v2_materials_done:
+		print("[InventoryForge Migration] Running migration: MATERIAL category → is_ingredient system")
+		migrate_materials_to_ingredients()
+		_migration_v2_materials_done = true
+		print("[InventoryForge Migration] Migration completed successfully")

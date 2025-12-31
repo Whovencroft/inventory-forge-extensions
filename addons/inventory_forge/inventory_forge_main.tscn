@@ -695,6 +695,36 @@ theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
 theme_override_font_sizes/font_size = 14
 text = "CRAFTING"
 
+[node name="IsIngredientRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection"]
+layout_mode = 2
+
+[node name="IsIngredientLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IsIngredientRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Is Ingredient"
+
+[node name="IsIngredientCheck" type="CheckBox" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IsIngredientRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MaterialTypeRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="MaterialTypeLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/MaterialTypeRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Material Type"
+
+[node name="MaterialTypeOption" type="OptionButton" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/MaterialTypeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CraftingSeparator" type="HSeparator" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection"]
+layout_mode = 2
+
 [node name="CraftableRow" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection"]
 layout_mode = 2
 
@@ -711,11 +741,38 @@ layout_mode = 2
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+theme_override_constants/separation = 6
 
-[node name="IngredientsLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IngredientsContainer"]
+[node name="IngredientsHeader" type="HBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IngredientsContainer"]
+layout_mode = 2
+
+[node name="IngredientsLabel" type="Label" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IngredientsContainer/IngredientsHeader"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-text = "Ingredienti: (da implementare)"
+text = "Ingredients:"
+
+[node name="Spacer" type="Control" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IngredientsContainer/IngredientsHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AddIngredientButton" type="Button" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IngredientsContainer/IngredientsHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+tooltip_text = "Add ingredient (max 10)"
+text = "+ Add"
+
+[node name="IngredientsScroll" type="ScrollContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IngredientsContainer"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="IngredientsListVBox" type="VBoxContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit/DetailsContainer/DetailsVBox/CraftingSection/IngredientsContainer/IngredientsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
 
 [node name="WarningsPanel" type="PanelContainer" parent="HSplitContainer/RightPanel/MarginContainer/MainVSplit"]
 custom_minimum_size = Vector2(0, 120)

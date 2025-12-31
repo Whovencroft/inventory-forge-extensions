@@ -189,6 +189,24 @@ signal changed_item()
 
 # === Crafting ===
 @export_group("Crafting")
+
+## Questo item può essere usato come ingrediente per crafting
+@export var is_ingredient: bool = false:
+	set(value):
+		is_ingredient = value
+		emit_changed()
+		changed_item.emit()
+
+## Tipo di materiale (se is_ingredient = true)
+@export var material_type: ItemEnums.MaterialType = ItemEnums.MaterialType.NONE:
+	set(value):
+		material_type = value
+		emit_changed()
+		changed_item.emit()
+
+@export_subgroup("Crafting Recipe")
+
+## Questo item può essere creato tramite crafting
 @export var craftable: bool = false:
 	set(value):
 		craftable = value
@@ -246,6 +264,51 @@ func is_valid() -> bool:
 	return id >= 0 and not name_key.is_empty()
 
 
+## Validates ingredients with database context
+func validate_ingredients_with_db(db: ItemDatabase) -> Array[String]:
+	var warnings: Array[String] = []
+	
+	if not craftable or db == null:
+		return warnings
+	
+	if ingredients.is_empty():
+		return warnings  # Già gestito da get_validation_warnings()
+	
+	var seen_ids: Array[int] = []
+	
+	for i in range(ingredients.size()):
+		var ing = ingredients[i]
+		
+		# Verifica struttura dictionary
+		if not ing.has("item_id") or not ing.has("amount"):
+			continue  # Già segnalato dalla validazione base
+		
+		var item_id: int = ing.get("item_id", -1)
+		var amount: int = ing.get("amount", 0)
+		
+		# Verifica item_id valido
+		if item_id < 0:
+			warnings.append("Ingredient %d: Item not selected" % (i + 1))
+			continue
+		
+		# Verifica self-reference
+		if item_id == id:
+			warnings.append("Ingredient %d: Item cannot use itself" % (i + 1))
+		
+		# Verifica duplicati
+		if item_id in seen_ids:
+			warnings.append("Ingredient %d: Duplicate item ID %d" % [i + 1, item_id])
+		else:
+			seen_ids.append(item_id)
+		
+		# Verifica esistenza nel database
+		var found_item := db.get_item_by_id(item_id)
+		if found_item == null:
+			warnings.append("Ingredient %d: Item ID %d not found in database" % [i + 1, item_id])
+	
+	return warnings
+
+
 ## Gets a list of validation warnings
 func get_validation_warnings() -> Array[String]:
 	var warnings: Array[String] = []
@@ -276,6 +339,25 @@ func get_validation_warnings() -> Array[String]:
 	
 	if craftable and ingredients.is_empty():
 		warnings.append("Craftable item but no ingredients specified")
+	
+	# Validazione base ingredienti (senza database)
+	for i in range(ingredients.size()):
+		var ing = ingredients[i]
+		
+		if not ing.has("item_id") or not ing.has("amount"):
+			warnings.append("Ingredient %d: Invalid structure" % i)
+			continue
+		
+		var amount: int = ing.get("amount", 0)
+		if amount <= 0:
+			warnings.append("Ingredient %d: Amount must be > 0" % i)
+	
+	# Validazione is_ingredient e material_type
+	if is_ingredient and material_type == ItemEnums.MaterialType.NONE:
+		warnings.append("Item marked as ingredient but material type not set")
+	
+	if not is_ingredient and material_type != ItemEnums.MaterialType.NONE:
+		warnings.append("Material type set but item not marked as ingredient")
 	
 	return warnings
 
@@ -310,6 +392,8 @@ func duplicate_item() -> ItemDefinition:
 	new_item.effect_duration = effect_duration
 	new_item.is_quest_item = is_quest_item
 	new_item.quest_id = quest_id
+	new_item.is_ingredient = is_ingredient
+	new_item.material_type = material_type
 	new_item.craftable = craftable
 	new_item.ingredients = ingredients.duplicate(true)
 	
@@ -334,5 +418,7 @@ func to_dictionary() -> Dictionary:
 		"effect_type": effect_type,
 		"effect_value": effect_value,
 		"is_quest_item": is_quest_item,
+		"is_ingredient": is_ingredient,
+		"material_type": material_type,
 		"craftable": craftable,
 	}

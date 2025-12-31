@@ -8,6 +8,9 @@ extends Control
 
 const Settings := preload("res://addons/inventory_forge/inventory_forge_settings.gd")
 
+# === Constants ===
+const MAX_INGREDIENTS := 10  # Limite massimo ingredienti per ricetta
+
 # === UI References ===
 @onready var add_button: Button = %AddButton
 @onready var duplicate_button: Button = %DuplicateButton
@@ -67,8 +70,13 @@ const Settings := preload("res://addons/inventory_forge/inventory_forge_settings
 @onready var quest_id_edit: LineEdit = %QuestIdEdit
 
 # Crafting
+@onready var is_ingredient_check: CheckBox = get_node_or_null("%IsIngredientCheck")
+@onready var material_type_option: OptionButton = get_node_or_null("%MaterialTypeOption")
+@onready var material_type_row: HBoxContainer = get_node_or_null("%MaterialTypeRow")
 @onready var craftable_check: CheckBox = %CraftableCheck
 @onready var ingredients_container: VBoxContainer = %IngredientsContainer
+@onready var add_ingredient_button: Button = get_node_or_null("%AddIngredientButton")
+@onready var ingredients_list_vbox: VBoxContainer = get_node_or_null("%IngredientsListVBox")
 
 # Validation
 @onready var warnings_container: VBoxContainer = %WarningsContainer
@@ -104,6 +112,9 @@ func _load_database() -> void:
 	if database == null:
 		database = ItemDatabase.new()
 		_save_database()
+	else:
+		# Esegui migrazione se necessario
+		database.validate_and_migrate()
 
 
 func _save_database() -> void:
@@ -179,6 +190,13 @@ func _setup_ui() -> void:
 	for i in range(ItemEnums.EffectType.size()):
 		var effect_name: String = str(ItemEnums.EffectType.keys()[i]).capitalize().replace("_", " ")
 		effect_type_option.add_item(effect_name, i)
+	
+	# Setup opzioni material type
+	if material_type_option:
+		material_type_option.clear()
+		for i in range(ItemEnums.MaterialType.size()):
+			var mat_name: String = str(ItemEnums.MaterialType.keys()[i]).capitalize()
+			material_type_option.add_item(mat_name, i)
 
 
 func _connect_signals() -> void:
@@ -237,7 +255,13 @@ func _connect_signals() -> void:
 	quest_id_edit.text_changed.connect(_on_quest_id_changed)
 	
 	# Crafting
+	if is_ingredient_check:
+		is_ingredient_check.toggled.connect(_on_is_ingredient_toggled)
+	if material_type_option:
+		material_type_option.item_selected.connect(_on_material_type_changed)
 	craftable_check.toggled.connect(_on_craftable_toggled)
+	if add_ingredient_button:
+		add_ingredient_button.pressed.connect(_on_add_ingredient_pressed)
 
 
 # === Refresh UI ===
@@ -350,9 +374,19 @@ func _update_details_panel() -> void:
 	quest_id_edit.text = selected_item.quest_id
 	quest_id_edit.visible = selected_item.is_quest_item
 	
-	# Crafting
+	# Crafting - Ingredient
+	if is_ingredient_check:
+		is_ingredient_check.button_pressed = selected_item.is_ingredient
+	if material_type_row:
+		material_type_row.visible = selected_item.is_ingredient
+	if material_type_option:
+		material_type_option.selected = selected_item.material_type
+	
+	# Crafting - Craftable
 	craftable_check.button_pressed = selected_item.craftable
 	ingredients_container.visible = selected_item.craftable
+	if selected_item.craftable:
+		_populate_ingredients_ui()
 	
 	# Warnings
 	_update_warnings()
@@ -373,6 +407,10 @@ func _update_warnings() -> void:
 	# Add duplicate ID warning
 	if database.has_duplicate_id(selected_item.id, selected_item):
 		warnings.insert(0, "Duplicate ID: an item with ID %d already exists" % selected_item.id)
+	
+	# Add advanced ingredient validation
+	if selected_item.craftable:
+		warnings.append_array(selected_item.validate_ingredients_with_db(database))
 	
 	for warning in warnings:
 		var label := Label.new()
@@ -647,4 +685,229 @@ func _on_craftable_toggled(pressed: bool) -> void:
 	if selected_item and not is_updating_ui:
 		selected_item.craftable = pressed
 		ingredients_container.visible = pressed
+		if pressed:
+			_populate_ingredients_ui()
+		_mark_modified()
+
+
+# === Crafting Ingredients Management ===
+
+func _populate_ingredients_ui() -> void:
+	if selected_item == null or ingredients_list_vbox == null:
+		return
+	
+	# Pulisci la lista corrente
+	for child in ingredients_list_vbox.get_children():
+		child.queue_free()
+	
+	# Se non ci sono ingredienti, mostra messaggio vuoto
+	if selected_item.ingredients.is_empty():
+		var empty_label := Label.new()
+		empty_label.text = "No ingredients yet. Click + Add to start"
+		empty_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6, 1))
+		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		ingredients_list_vbox.add_child(empty_label)
+		return
+	
+	# Crea una riga per ogni ingrediente
+	for i in range(selected_item.ingredients.size()):
+		var ingredient_data: Dictionary = selected_item.ingredients[i]
+		var row := _create_ingredient_row(ingredient_data, i)
+		ingredients_list_vbox.add_child(row)
+
+
+func _create_ingredient_row(ingredient_data: Dictionary, row_index: int) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	
+	# === Item Selection (OptionButton) ===
+	var item_option := OptionButton.new()
+	item_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	item_option.custom_minimum_size = Vector2(200, 0)
+	
+	# Popola con solo item che hanno is_ingredient = true
+	var available_ingredients := database.get_ingredients() if database else []
+	
+	if available_ingredients.is_empty():
+		item_option.add_item("(No ingredients available)", -1)
+		item_option.disabled = true
+	else:
+		item_option.add_item("(Select ingredient...)", -1)
+		
+		var selected_idx := 0
+		for i in range(available_ingredients.size()):
+			var item := available_ingredients[i]
+			if item == null:
+				continue
+			
+			var display_name := item.get_translated_name()
+			if display_name.is_empty() or display_name == "???":
+				display_name = item.name_key if not item.name_key.is_empty() else "(No name)"
+			
+			# Formato: [ID] Nome (MATERIAL_TYPE) [📝 Craftable]
+			var mat_type: String = ItemEnums.MaterialType.keys()[item.material_type]
+			var label := "[%d] %s (%s)" % [item.id, display_name, mat_type]
+			
+			# Visual cue se l'ingrediente è anche craftabile (crafting ricorsivo)
+			if item.craftable:
+				label += " [📝 Craftable]"
+			
+			item_option.add_item(label, item.id)
+			
+			# Se questo è l'item selezionato, ricorda l'indice
+			if item.id == ingredient_data.get("item_id", -1):
+				selected_idx = item_option.item_count - 1
+		
+		item_option.selected = selected_idx
+	
+	item_option.item_selected.connect(_on_ingredient_item_changed.bind(row_index))
+	row.add_child(item_option)
+	
+	# === Amount Label ===
+	var amount_label := Label.new()
+	amount_label.text = "×"
+	amount_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(amount_label)
+	
+	# === Amount SpinBox ===
+	var amount_spinbox := SpinBox.new()
+	amount_spinbox.min_value = 1
+	amount_spinbox.max_value = 999
+	amount_spinbox.value = ingredient_data.get("amount", 1)
+	amount_spinbox.custom_minimum_size = Vector2(80, 0)
+	amount_spinbox.value_changed.connect(_on_ingredient_amount_changed.bind(row_index))
+	row.add_child(amount_spinbox)
+	
+	# === Up Button ===
+	var up_button := Button.new()
+	up_button.text = "↑"
+	up_button.custom_minimum_size = Vector2(32, 0)
+	up_button.tooltip_text = "Move up"
+	up_button.disabled = (row_index == 0)  # Disabilita se è il primo
+	up_button.pressed.connect(_move_ingredient_up.bind(row_index))
+	row.add_child(up_button)
+	
+	# === Down Button ===
+	var down_button := Button.new()
+	down_button.text = "↓"
+	down_button.custom_minimum_size = Vector2(32, 0)
+	down_button.tooltip_text = "Move down"
+	down_button.disabled = (row_index == selected_item.ingredients.size() - 1)  # Disabilita se è l'ultimo
+	down_button.pressed.connect(_move_ingredient_down.bind(row_index))
+	row.add_child(down_button)
+	
+	# === Remove Button ===
+	var remove_button := Button.new()
+	remove_button.text = "X"
+	remove_button.custom_minimum_size = Vector2(32, 0)
+	remove_button.tooltip_text = "Remove ingredient"
+	remove_button.pressed.connect(_on_remove_ingredient_pressed.bind(row_index))
+	row.add_child(remove_button)
+	
+	return row
+
+
+func _on_add_ingredient_pressed() -> void:
+	if selected_item == null:
+		return
+	
+	# Controlla il limite massimo
+	if selected_item.ingredients.size() >= MAX_INGREDIENTS:
+		push_warning("[InventoryForge] Maximum %d ingredients per recipe" % MAX_INGREDIENTS)
+		return
+	
+	# Aggiungi nuovo ingrediente con valori default
+	selected_item.ingredients.append({"item_id": -1, "amount": 1})
+	_populate_ingredients_ui()
+	_mark_modified()
+
+
+func _on_remove_ingredient_pressed(row_index: int) -> void:
+	if selected_item == null or row_index < 0 or row_index >= selected_item.ingredients.size():
+		return
+	
+	selected_item.ingredients.remove_at(row_index)
+	_populate_ingredients_ui()
+	_mark_modified()
+
+
+func _on_ingredient_item_changed(item_index: int, row_index: int) -> void:
+	if selected_item == null or row_index < 0 or row_index >= selected_item.ingredients.size():
+		return
+	
+	if is_updating_ui:
+		return
+	
+	# Ottieni l'ID dell'item selezionato dall'OptionButton
+	# item_index è l'indice selezionato, dobbiamo recuperare l'ID associato
+	# Per farlo, dobbiamo accedere al nodo... ma qui abbiamo solo l'indice
+	# Soluzione: prendiamo l'ID dalla lista filtrata del database
+	
+	# Trova il nodo OptionButton dalla lista
+	if row_index >= ingredients_list_vbox.get_child_count():
+		return
+	
+	var row := ingredients_list_vbox.get_child(row_index) as HBoxContainer
+	if row == null or row.get_child_count() == 0:
+		return
+	
+	var option_button := row.get_child(0) as OptionButton
+	if option_button == null:
+		return
+	
+	var selected_id := option_button.get_item_id(option_button.selected)
+	selected_item.ingredients[row_index]["item_id"] = selected_id
+	_mark_modified()
+
+
+func _on_ingredient_amount_changed(value: float, row_index: int) -> void:
+	if selected_item == null or row_index < 0 or row_index >= selected_item.ingredients.size():
+		return
+	
+	if is_updating_ui:
+		return
+	
+	selected_item.ingredients[row_index]["amount"] = int(value)
+	_mark_modified()
+
+
+func _move_ingredient_up(row_index: int) -> void:
+	if selected_item == null or row_index <= 0 or row_index >= selected_item.ingredients.size():
+		return
+	
+	# Scambia con l'elemento precedente
+	var temp = selected_item.ingredients[row_index]
+	selected_item.ingredients[row_index] = selected_item.ingredients[row_index - 1]
+	selected_item.ingredients[row_index - 1] = temp
+	
+	_populate_ingredients_ui()
+	_mark_modified()
+
+
+func _move_ingredient_down(row_index: int) -> void:
+	if selected_item == null or row_index < 0 or row_index >= selected_item.ingredients.size() - 1:
+		return
+	
+	# Scambia con l'elemento successivo
+	var temp = selected_item.ingredients[row_index]
+	selected_item.ingredients[row_index] = selected_item.ingredients[row_index + 1]
+	selected_item.ingredients[row_index + 1] = temp
+	
+	_populate_ingredients_ui()
+	_mark_modified()
+
+
+func _on_is_ingredient_toggled(pressed: bool) -> void:
+	if selected_item and not is_updating_ui:
+		selected_item.is_ingredient = pressed
+		if material_type_row:
+			material_type_row.visible = pressed
+		if not pressed:
+			selected_item.material_type = ItemEnums.MaterialType.NONE
+		_mark_modified()
+
+
+func _on_material_type_changed(index: int) -> void:
+	if selected_item and not is_updating_ui:
+		selected_item.material_type = index as ItemEnums.MaterialType
 		_mark_modified()

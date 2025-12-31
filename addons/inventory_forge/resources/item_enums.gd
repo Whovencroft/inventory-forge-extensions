@@ -14,7 +14,6 @@ enum Category {
 	WEAPON,        ## Weapon
 	ARMOR,         ## Armor
 	ACCESSORY,     ## Accessory (rings, amulets)
-	MATERIAL,      ## Crafting material
 	KEY_ITEM,      ## Key/quest item
 	MISC,          ## Miscellaneous
 }
@@ -61,6 +60,23 @@ enum EffectType {
 }
 
 
+## Material type for crafting ingredients
+enum MaterialType {
+	NONE,          ## Not a crafting ingredient
+	ORE,           ## Ores and minerals (Iron Ore, Gold Nugget)
+	HERB,          ## Plants and herbs (Healing Herb, Mana Flower)
+	WOOD,          ## Wood materials (Oak Wood, Mystical Branch)
+	LEATHER,       ## Leather and hides (Wolf Pelt, Dragon Scale)
+	CLOTH,         ## Fabrics and threads (Silk, Cotton)
+	GEM,           ## Precious gems (Ruby, Diamond)
+	LIQUID,        ## Liquids and essences (Holy Water, Magic Essence)
+	COMPONENT,     ## Crafted components (Iron Bar, Enchanted Crystal)
+	FOOD,          ## Food ingredients (Wheat, Milk)
+	MAGICAL,       ## Magical reagents (Phoenix Feather, Unicorn Horn)
+	MISC,          ## Miscellaneous materials
+}
+
+
 ## Helper: Gets the translated category name
 static func get_category_name(category: Category) -> String:
 	match category:
@@ -68,7 +84,6 @@ static func get_category_name(category: Category) -> String:
 		Category.WEAPON: return "CATEGORY_WEAPON"
 		Category.ARMOR: return "CATEGORY_ARMOR"
 		Category.ACCESSORY: return "CATEGORY_ACCESSORY"
-		Category.MATERIAL: return "CATEGORY_MATERIAL"
 		Category.KEY_ITEM: return "CATEGORY_KEY_ITEM"
 		Category.MISC: return "CATEGORY_MISC"
 		_: return "CATEGORY_UNKNOWN"
@@ -127,3 +142,21 @@ static func get_effect_type_name(effect: EffectType) -> String:
 		EffectType.TELEPORT: return "EFFECT_TELEPORT"
 		EffectType.REVIVE: return "EFFECT_REVIVE"
 		_: return "EFFECT_UNKNOWN"
+
+
+## Helper: Gets the translated material type name
+static func get_material_type_name(mat_type: MaterialType) -> String:
+	match mat_type:
+		MaterialType.NONE: return "MATERIAL_NONE"
+		MaterialType.ORE: return "MATERIAL_ORE"
+		MaterialType.HERB: return "MATERIAL_HERB"
+		MaterialType.WOOD: return "MATERIAL_WOOD"
+		MaterialType.LEATHER: return "MATERIAL_LEATHER"
+		MaterialType.CLOTH: return "MATERIAL_CLOTH"
+		MaterialType.GEM: return "MATERIAL_GEM"
+		MaterialType.LIQUID: return "MATERIAL_LIQUID"
+		MaterialType.COMPONENT: return "MATERIAL_COMPONENT"
+		MaterialType.FOOD: return "MATERIAL_FOOD"
+		MaterialType.MAGICAL: return "MATERIAL_MAGICAL"
+		MaterialType.MISC: return "MATERIAL_MISC"
+		_: return "MATERIAL_UNKNOWN"
