@@ -142,6 +142,12 @@ Contributions welcome! Please:
 
 ---
 
+## Development
+
+This plugin was developed with the assistance of AI tools (Claude/ChatGPT) for code review, debugging, and documentation. The core design, architecture, and implementation are human-crafted.
+
+---
+
 ## License
 
 MIT License - See [LICENSE](LICENSE)
