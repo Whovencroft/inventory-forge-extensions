@@ -1400,10 +1400,10 @@ func _update_statistics() -> void:
 	var overview_container := HBoxContainer.new()
 	overview_container.add_theme_constant_override("separation", 20)
 	
-	_add_stat_card(overview_container, "Total Items", str(stats.total_items), Color.WHITE)
-	_add_stat_card(overview_container, "Ingredients", str(stats.ingredients_count), Color.CORNFLOWER_BLUE)
-	_add_stat_card(overview_container, "Craftable", str(stats.craftable_count), Color.MEDIUM_SEA_GREEN)
-	_add_stat_card(overview_container, "With Warnings", str(stats.items_with_warnings), Color.ORANGE if stats.items_with_warnings > 0 else Color.GRAY)
+	overview_container.add_child(StatisticsUIBuilder.create_stat_card("Total Items", str(stats.total_items), Color.WHITE))
+	overview_container.add_child(StatisticsUIBuilder.create_stat_card("Ingredients", str(stats.ingredients_count), Color.CORNFLOWER_BLUE))
+	overview_container.add_child(StatisticsUIBuilder.create_stat_card("Craftable", str(stats.craftable_count), Color.MEDIUM_SEA_GREEN))
+	overview_container.add_child(StatisticsUIBuilder.create_stat_card("With Warnings", str(stats.items_with_warnings), Color.ORANGE if stats.items_with_warnings > 0 else Color.GRAY))
 	
 	stats_vbox.add_child(overview_container)
 	
@@ -1417,8 +1417,8 @@ func _update_statistics() -> void:
 	left_col.add_theme_constant_override("separation", 20)
 	
 	# === Category Distribution ===
-	_add_section_title(left_col, "BY CATEGORY")
-	_add_category_chart(left_col, stats.category_counts, stats.total_items)
+	left_col.add_child(StatisticsUIBuilder.create_section_title("BY CATEGORY"))
+	left_col.add_child(StatisticsUIBuilder.create_category_chart(stats.category_counts, stats.total_items))
 	
 	columns.add_child(left_col)
 	
@@ -1428,8 +1428,8 @@ func _update_statistics() -> void:
 	right_col.add_theme_constant_override("separation", 20)
 	
 	# === Rarity Distribution ===
-	_add_section_title(right_col, "BY RARITY")
-	_add_rarity_chart(right_col, stats.rarity_counts, stats.total_items)
+	right_col.add_child(StatisticsUIBuilder.create_section_title("BY RARITY"))
+	right_col.add_child(StatisticsUIBuilder.create_rarity_chart(stats.rarity_counts, stats.total_items))
 	
 	columns.add_child(right_col)
 	
@@ -1437,12 +1437,12 @@ func _update_statistics() -> void:
 	
 	# === Material Types (if any ingredients) ===
 	if stats.ingredients_count > 0:
-		_add_section_title(stats_vbox, "MATERIAL TYPES")
-		_add_material_type_chart(stats_vbox, stats.material_type_counts, stats.ingredients_count)
+		stats_vbox.add_child(StatisticsUIBuilder.create_section_title("MATERIAL TYPES"))
+		stats_vbox.add_child(StatisticsUIBuilder.create_material_type_chart(stats.material_type_counts, stats.ingredients_count))
 	
 	# === Issues Section ===
 	if stats.items_with_warnings > 0 or stats.duplicate_ids > 0:
-		_add_section_title(stats_vbox, "ITEM ISSUES")
+		stats_vbox.add_child(StatisticsUIBuilder.create_section_title("ITEM ISSUES"))
 		var issues_container := VBoxContainer.new()
 		
 		if stats.duplicate_ids > 0:
@@ -1461,137 +1461,6 @@ func _update_statistics() -> void:
 	
 	# === LOOT TABLES SECTION ===
 	_add_loot_table_statistics(stats_vbox)
-
-
-func _add_stat_card(container: HBoxContainer, title: String, value: String, color: Color) -> void:
-	var card := PanelContainer.new()
-	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 5)
-	
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 15)
-	margin.add_theme_constant_override("margin_right", 15)
-	margin.add_theme_constant_override("margin_top", 10)
-	margin.add_theme_constant_override("margin_bottom", 10)
-	
-	var value_label := Label.new()
-	value_label.text = value
-	value_label.add_theme_font_size_override("font_size", 28)
-	value_label.add_theme_color_override("font_color", color)
-	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(value_label)
-	
-	var title_label := Label.new()
-	title_label.text = title
-	title_label.add_theme_font_size_override("font_size", 12)
-	title_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1))
-	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(title_label)
-	
-	margin.add_child(vbox)
-	card.add_child(margin)
-	container.add_child(card)
-
-
-func _add_section_title(container: VBoxContainer, title: String) -> void:
-	var label := Label.new()
-	label.text = title
-	label.add_theme_font_size_override("font_size", 16)
-	label.add_theme_color_override("font_color", Color(0.6, 0.8, 1, 1))
-	container.add_child(label)
-
-
-func _add_category_chart(container: VBoxContainer, counts: Dictionary, total: int) -> void:
-	var chart_container := VBoxContainer.new()
-	chart_container.add_theme_constant_override("separation", 6)
-	
-	for category in ItemEnums.Category.values():
-		var count: int = counts.get(category, 0)
-		var category_name: String = ItemEnums.Category.keys()[category]
-		_add_progress_row(chart_container, category_name.capitalize(), count, total, Color.CORNFLOWER_BLUE)
-	
-	container.add_child(chart_container)
-
-
-func _add_rarity_chart(container: VBoxContainer, counts: Dictionary, total: int) -> void:
-	var chart_container := VBoxContainer.new()
-	chart_container.add_theme_constant_override("separation", 6)
-	
-	for rarity in ItemEnums.Rarity.values():
-		var count: int = counts.get(rarity, 0)
-		var rarity_name: String = ItemEnums.Rarity.keys()[rarity]
-		var color := ItemEnums.get_rarity_color(rarity)
-		_add_progress_row(chart_container, rarity_name.capitalize(), count, total, color)
-	
-	container.add_child(chart_container)
-
-
-func _add_material_type_chart(container: VBoxContainer, counts: Dictionary, total: int) -> void:
-	var chart_container := HBoxContainer.new()
-	chart_container.add_theme_constant_override("separation", 20)
-	
-	var left_col := VBoxContainer.new()
-	left_col.add_theme_constant_override("separation", 6)
-	left_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var right_col := VBoxContainer.new()
-	right_col.add_theme_constant_override("separation", 6)
-	right_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var i := 0
-	for mat_type in ItemEnums.MaterialType.values():
-		if mat_type == ItemEnums.MaterialType.NONE:
-			continue
-		var count: int = counts.get(mat_type, 0)
-		if count == 0:
-			continue
-		var mat_name: String = ItemEnums.MaterialType.keys()[mat_type]
-		var target_col := left_col if i % 2 == 0 else right_col
-		_add_progress_row(target_col, mat_name.capitalize(), count, total, Color.MEDIUM_PURPLE)
-		i += 1
-	
-	chart_container.add_child(left_col)
-	chart_container.add_child(right_col)
-	container.add_child(chart_container)
-
-
-func _add_progress_row(container: VBoxContainer, label_text: String, value: int, max_value: int, color: Color) -> void:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
-	
-	var label := Label.new()
-	label.text = label_text
-	label.custom_minimum_size = Vector2(100, 0)
-	row.add_child(label)
-	
-	var progress := ProgressBar.new()
-	progress.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	progress.custom_minimum_size = Vector2(150, 20)
-	progress.max_value = max_value if max_value > 0 else 1
-	progress.value = value
-	progress.show_percentage = false
-	
-	# Stilizza la progress bar
-	var style := StyleBoxFlat.new()
-	style.bg_color = color
-	style.corner_radius_top_left = 3
-	style.corner_radius_top_right = 3
-	style.corner_radius_bottom_left = 3
-	style.corner_radius_bottom_right = 3
-	progress.add_theme_stylebox_override("fill", style)
-	
-	row.add_child(progress)
-	
-	var count_label := Label.new()
-	var percentage := (float(value) / float(max_value) * 100.0) if max_value > 0 else 0.0
-	count_label.text = "%d (%d%%)" % [value, int(percentage)]
-	count_label.custom_minimum_size = Vector2(80, 0)
-	count_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1))
-	row.add_child(count_label)
-	
-	container.add_child(row)
 
 
 func _add_loot_table_statistics(container: VBoxContainer) -> void:
@@ -1620,10 +1489,10 @@ func _add_loot_table_statistics(container: VBoxContainer) -> void:
 	var overview_container := HBoxContainer.new()
 	overview_container.add_theme_constant_override("separation", 20)
 	
-	_add_stat_card(overview_container, "Total Tables", str(loot_stats.total_tables), Color.WHITE)
-	_add_stat_card(overview_container, "Total Entries", str(loot_stats.total_entries), Color.CORNFLOWER_BLUE)
-	_add_stat_card(overview_container, "Avg Entries", "%.1f" % loot_stats.avg_entries_per_table, Color.MEDIUM_SEA_GREEN)
-	_add_stat_card(overview_container, "With Sub-Tables", str(loot_stats.tables_with_sub_tables), Color.MEDIUM_PURPLE)
+	overview_container.add_child(StatisticsUIBuilder.create_stat_card("Total Tables", str(loot_stats.total_tables), Color.WHITE))
+	overview_container.add_child(StatisticsUIBuilder.create_stat_card("Total Entries", str(loot_stats.total_entries), Color.CORNFLOWER_BLUE))
+	overview_container.add_child(StatisticsUIBuilder.create_stat_card("Avg Entries", "%.1f" % loot_stats.avg_entries_per_table, Color.MEDIUM_SEA_GREEN))
+	overview_container.add_child(StatisticsUIBuilder.create_stat_card("With Sub-Tables", str(loot_stats.tables_with_sub_tables), Color.MEDIUM_PURPLE))
 	
 	container.add_child(overview_container)
 	
@@ -1636,8 +1505,8 @@ func _add_loot_table_statistics(container: VBoxContainer) -> void:
 	left_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	left_col.add_theme_constant_override("separation", 20)
 	
-	_add_section_title(left_col, "BY RARITY TIER")
-	_add_rarity_tier_chart(left_col, loot_stats.rarity_tier_counts, loot_stats.total_tables)
+	left_col.add_child(StatisticsUIBuilder.create_section_title("BY RARITY TIER"))
+	left_col.add_child(StatisticsUIBuilder.create_rarity_tier_chart(loot_stats.rarity_tier_counts, loot_stats.total_tables))
 	
 	columns.add_child(left_col)
 	
@@ -1648,7 +1517,7 @@ func _add_loot_table_statistics(container: VBoxContainer) -> void:
 	
 	# Loot Table Issues
 	if loot_stats.tables_with_warnings > 0 or loot_stats.duplicate_ids > 0 or loot_stats.empty_tables > 0:
-		_add_section_title(right_col, "LOOT TABLE ISSUES")
+		right_col.add_child(StatisticsUIBuilder.create_section_title("LOOT TABLE ISSUES"))
 		var issues_container := VBoxContainer.new()
 		issues_container.add_theme_constant_override("separation", 4)
 		
@@ -1672,7 +1541,7 @@ func _add_loot_table_statistics(container: VBoxContainer) -> void:
 		
 		right_col.add_child(issues_container)
 	else:
-		_add_section_title(right_col, "STATUS")
+		right_col.add_child(StatisticsUIBuilder.create_section_title("STATUS"))
 		var ok_label := Label.new()
 		ok_label.text = "  All loot tables are valid"
 		ok_label.add_theme_color_override("font_color", Color.MEDIUM_SEA_GREEN)
@@ -1680,29 +1549,6 @@ func _add_loot_table_statistics(container: VBoxContainer) -> void:
 	
 	columns.add_child(right_col)
 	container.add_child(columns)
-
-
-func _add_rarity_tier_chart(container: VBoxContainer, counts: Dictionary, total: int) -> void:
-	var chart_container := VBoxContainer.new()
-	chart_container.add_theme_constant_override("separation", 6)
-	
-	# Colori per i rarity tier
-	var tier_colors := {
-		LootTable.RarityTier.CUSTOM: Color(0.5, 0.5, 0.5, 1),
-		LootTable.RarityTier.COMMON: Color(0.8, 0.8, 0.8, 1),
-		LootTable.RarityTier.UNCOMMON: Color(0.3, 0.8, 0.3, 1),
-		LootTable.RarityTier.RARE: Color(0.3, 0.5, 1.0, 1),
-		LootTable.RarityTier.EPIC: Color(0.6, 0.3, 0.9, 1),
-		LootTable.RarityTier.LEGENDARY: Color(1.0, 0.6, 0.1, 1),
-	}
-	
-	for tier in LootTable.RarityTier.values():
-		var count: int = counts.get(tier, 0)
-		var tier_name: String = LootTable.get_rarity_name(tier)
-		var color: Color = tier_colors.get(tier, Color.WHITE)
-		_add_progress_row(chart_container, tier_name, count, total, color)
-	
-	container.add_child(chart_container)
 
 
 # === Loot Tables Tab ===
