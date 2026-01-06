@@ -1,7 +1,8 @@
-# Ignora tutto
-/* export-ignore
+# Normalize EOL for all files that Git considers text files.
+* text=auto eol=lf
 
-# Includi la cartella dell'addon
-!/addons/
-!/addons/inventory_forge/
-!/addons/inventory_forge/**
+# Only include the addons folder when downloading from the Asset Library.
+/**        export-ignore
+/addons    !export-ignore
+/addons/quest_system !export-ignore
+/addons/quest_system/** !export-ignore
