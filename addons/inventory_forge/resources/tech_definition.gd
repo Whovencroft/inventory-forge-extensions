@@ -159,7 +159,7 @@ func duplicate_tech() -> TechDefinition:
 			new_tech.passives.append(p.duplicate_passive())
 	new_tech.custom_fields = custom_fields.duplicate(true)
 
-	return new_item
+	return new_tech
 
 
 ## Converte l'item in un Dictionary (per serializzazione/debug)
