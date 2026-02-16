@@ -461,29 +461,13 @@ func _tech_to_dict(tech: TechDefinition) -> Dictionary:
 		"name_key": tech.name_key,
 		"description_key": tech.description_key,
 		"icon_path": icon_path,
-		"category": TechEnums.Category.keys()[tech.category],
-		"rarity": TechEnums.Rarity.keys()[tech.rarity],
-		"stack_capacity": tech.stack_capacity,
-		"stack_count_limit": tech.stack_count_limit,
-		"buy_price": tech.buy_price,
-		"sell_price": tech.sell_price,
-		"tradeable": tech.tradeable,
-		"required_level": tech.required_level,
-		"equippable": tech.equippable,
-		"equip_slot": TechEnums.EquipSlot.keys()[tech.equip_slot],
-		"stat_atk": tech.stat_atk,
-		"stat_def": tech.stat_def,
-		"stat_hp": tech.stat_hp,
-		"stat_mp": tech.stat_mp,
-		"stat_spd": tech.stat_spd,
-		"consumable": tech.consumable,
-		"effect_type": TechEnums.EffectType.keys()[tech.effect_type],
-		"effect_value": tech.effect_value,
-		"effect_duration": tech.effect_duration,
-		"craftable": tech.craftable,
-		"is_ingredient": tech.is_ingredient,
-		"material_type": TechEnums.MaterialType.keys()[tech.material_type],
-		"ingredients": ingredients_data,
+		"techniquekind": TechEnums.TechniqueKind.keys()[tech.techniquekind],
+		"spellschool": TechEnums.SpellSchool.keys()[tech.spellschool],
+		"activationkind": TechEnums.ActivationKind.keys()[tech.activationkind],
+		"resourcetype": TechEnums.ResourceType.keys()[tech.resourcetype],
+		"poseffect": TechEnums.PosEffectType.keys()[tech.poseffect],
+		"negeffect": TechEnums.NegEffectType.keys()[tech.negeffect],
+		"passives": TechEnums.PassiveType.keys()[tech.passives],
 		"custom_fields": tech.custom_fields.duplicate(),
 	}
 
@@ -643,36 +627,14 @@ func _import_tech_from_dict(data: Dictionary, mode: ImportMode) -> Dictionary:
 		tech.icon = load(icon_path)
 	
 	# Enums
-	tech.category = _parse_enum(data.get("category", "CONSUMABLE"), TechEnums.Category)
-	tech.rarity = _parse_enum(data.get("rarity", "COMMON"), TechEnums.Rarity)
-	tech.equip_slot = _parse_enum(data.get("equip_slot", "NONE"), TechEnums.EquipSlot)
-	tech.effect_type = _parse_enum(data.get("effect_type", "NONE"), TechEnums.EffectType)
-	tech.material_type = _parse_enum(data.get("material_type", "NONE"), TechEnums.MaterialType)
+	tech.techniquekind = _parse_enum(data.get("techniquekind", "CONSUMABLE"), TechEnums.TechniqueKind)
+	tech.spellschool = _parse_enum(data.get("spellschool", "COMMON"), TechEnums.SpellSchool)
+	tech.activationkind = _parse_enum(data.get("activationkind", "NONE"), TechEnums.ActivationKind)
+	tech.resourcetype = _parse_enum(data.get("resourcetype", "NONE"), TechEnums.ResourceType)
+	tech.material_type = _parse_enum(data.get("poseffect", "NONE"), TechEnums.PosEffectType)
 	
-	# Numeric values
-	tech.stack_capacity = int(data.get("stack_capacity", 99))
-	tech.stack_count_limit = int(data.get("stack_count_limit", 0))
-	tech.buy_price = int(data.get("buy_price", 0))
-	tech.sell_price = int(data.get("sell_price", 0))
-	tech.required_level = int(data.get("required_level", 0))
-	tech.stat_atk = int(data.get("stat_atk", 0))
-	tech.stat_def = int(data.get("stat_def", 0))
-	tech.stat_hp = int(data.get("stat_hp", 0))
-	tech.stat_mp = int(data.get("stat_mp", 0))
-	tech.stat_spd = int(data.get("stat_spd", 0))
-	tech.effect_value = int(data.get("effect_value", 0))
-	tech.effect_duration = float(data.get("effect_duration", 0.0))
-	
-	# Booleans
-	tech.tradeable = _parse_bool(data.get("tradeable", true))
-	tech.equippable = _parse_bool(data.get("equippable", false))
-	tech.consumable = _parse_bool(data.get("consumable", false))
-	tech.craftable = _parse_bool(data.get("craftable", false))
-	tech.is_ingredient = _parse_bool(data.get("is_ingredient", false))
-	
-	# Note: ingredients are not imported here to avoid circular dependencies
-	# They should be resolved in a second pass if needed
-	
+		
+		
 	# Custom fields
 	var custom_fields_data = data.get("custom_fields", {})
 	if custom_fields_data is Dictionary:
