@@ -421,7 +421,7 @@ func export_to_csv() -> String:
 			TechEnums.ResourceType.keys()[tech.resourcetype],
 			TechEnums.PosEffectType.keys()[tech.poseffect],
 			TechEnums.NegEffectType.keys()[tech.negeffect],
-			TechEnums.PassiveType.keys()[tech.passives],
+			TechEnums.PassiveType.keys()[tech.passive],
 		]
 		lines.append(",".join(row))
 	
@@ -467,7 +467,7 @@ func _tech_to_dict(tech: TechDefinition) -> Dictionary:
 		"resourcetype": TechEnums.ResourceType.keys()[tech.resourcetype],
 		"poseffect": TechEnums.PosEffectType.keys()[tech.poseffect],
 		"negeffect": TechEnums.NegEffectType.keys()[tech.negeffect],
-		"passives": TechEnums.PassiveType.keys()[tech.passives],
+		"passive": TechEnums.PassiveType.keys()[tech.passive],
 		"custom_fields": tech.custom_fields.duplicate(),
 	}
 
